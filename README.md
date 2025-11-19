@@ -1,3 +1,6 @@
+# Acknowledgement
+Thanks to Gemini3
+
 # Academic Paper Rebuttal Template
 
 A professional LaTeX template for writing structured and visually appealing response letters to peer reviewers for academic papers.
