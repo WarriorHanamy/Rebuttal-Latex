@@ -1,0 +1,178 @@
+\documentclass[12pt, letterpaper]{article}
+
+% -------------------------------------------------------
+% 1. Packages & Basic Setup
+% -------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage[many]{tcolorbox} % 用于创建漂亮的评论框
+\usepackage{enumitem}        % 用于列表格式
+\usepackage{hyperref}        % 允许超链接
+\usepackage{ulem}            % 用于下划线
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{2em}
+% -------------------------------------------------------
+% 2. Color Definitions (Matching your Typst & Provided snippet)
+% -------------------------------------------------------
+% Colors from your Typst code
+\definecolor{navy}{RGB}{0, 0, 128} 
+\definecolor{commentheadertext}{RGB}{208, 208, 208} % #d0d0d0
+\definecolor{revisedcolor}{rgb}{0.0, 0.35, 0.0} % dark green equivalent
+
+% Colors from your provided snippet (kept for reference)
+\definecolor{block-gray}{gray}{0.95}
+\definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+\definecolor{brass}{rgb}{0.71, 0.65, 0.26}
+\definecolor{cerisepink}{rgb}{0.93, 0.23, 0.51}
+\definecolor{bananayellow}{rgb}{1.0, 0.88, 0.21}
+
+% -------------------------------------------------------
+% 3. Counters Setup
+% -------------------------------------------------------
+\newcounter{reviewer}
+\setcounter{reviewer}{0}
+
+% 'point' counter resets automatically when 'reviewer' steps
+\newcounter{point}[reviewer] 
+
+% -------------------------------------------------------
+% 4. Commands & Environments Replication
+% -------------------------------------------------------
+
+% --- Reviewer Section Header ---
+% Typst: #let reviewer(id) = { ... }
+\newcommand{\reviewer}[1]{%
+    \stepcounter{reviewer}%
+    \vspace{2em}%
+    \noindent\rule{\textwidth}{1.8pt}%
+    \section*{To Reviewer #1 (Reviewer \thereviewer)}%
+}
+
+% --- Comment Box Environment ---
+% Typst: #let comment(...) includes a grid with header color
+\newtcolorbox{reviewcomment}{
+    enhanced,
+    breakable,
+    boxrule=1pt,
+    colframe=navy,           % Border color
+    colback=white,           % Body background
+    coltitle=commentheadertext, % Header text color
+    colbacktitle=navy,       % Header background color
+    fonttitle=\bfseries,
+    title={Comment \thereviewer.\thepoint},
+    attach boxed title to top left={xshift=0pt, yshift=0pt},
+    sharp corners=south,     % Bottom corners sharp
+    rounded corners=north,   % Top corners rounded (visual style)
+    arc=4pt,
+    boxsep=2pt,
+    left=4pt, right=4pt, top=4pt, bottom=4pt,
+    % Auto-increment the point counter when box starts
+    before upper={\stepcounter{point}},
+    title code={
+        \path[fill=navy] (frame.north west) -- (frame.north east) -- ([yshift=0pt]frame.north east) -- ([yshift=0pt]frame.north west) -- cycle;
+        \node[anchor=west, text=commentheadertext, font=\bfseries] at ([xshift=4pt, yshift=-2ex]frame.north west) {Comment \thereviewer.\thepoint};
+    }
+}
+
+% --- Response Command ---
+% Typst: #let response(...) = { underline[*Response #rc_.#pc_:*] ... }
+\newcommand{\response}[1][black]{%
+    \par\vspace{0.5em}\noindent%
+    \textcolor{#1}{%
+        \textbf{\underline{Response \thereviewer.\thepoint:}}%
+    }%
+    \par%
+	\ignorespaces%
+}
+
+% --- Revised Text Helper ---
+% Typst: #let revised(...)
+\newcommand{\revised}[1]{%
+    \textcolor{revisedcolor}{#1}%
+}
+
+% --- Metadata Block Helper ---
+% Typst: #let rebuttal(...)
+\newcommand{\makeRebuttalHeader}[4]{% #1=ArticleID, #2=Title, #3=Authors, #4=Date
+    \noindent
+    \textbf{Article Number}: #1\\
+    \textbf{Article Title}: #2\\
+    \textbf{Authors}: #3\\
+    \textbf{Date}: #4
+    \begin{center}
+        \LARGE\textbf{Response Letter}
+    \end{center}
+    \vspace{1em}
+}
+
+% -------------------------------------------------------
+% 5. Optional: User's Original Grey Box (xresponse)
+% -------------------------------------------------------
+% If you prefer the grey box for responses instead of plain text, use this env.
+\newtcolorbox{xresponse}{%
+    empty,
+    borderline west = {4pt}{0pt}{gray},
+    boxrule = 0pt,
+    boxsep = 0pt,
+    breakable,
+    colback = block-gray,
+    enhanced,
+    frame hidden,
+    left skip = 0pt,
+    notitle,
+    parbox = false,
+    sharp corners,
+}
+
+% =======================================================
+% Document Content
+% =======================================================
+\begin{document}
+
+% --- Header Info ---
+\makeRebuttalHeader
+    {123456}
+    {Deep Reinforcement Learning for UAV Navigation}
+    {San Zhang, Si Li}
+    {\today}
+
+% --- Reviewer 1 Section ---
+\reviewer{1}
+
+\begin{reviewcomment}
+    The paper presents an interesting approach to UAV control using RL. However, the reward function definition in Equation 3 seems ambiguous. Could the authors clarify the penalty term?
+\end{reviewcomment}
+
+\response
+Thank you for your insightful comment. We agree that the definition was not clear enough.
+
+We have revised the reward function description. The penalty term is calculated based on the distance to the nearest obstacle.
+
+\revised{Revised text in manuscript: The penalty term $P_t$ is defined as $P_t = - \alpha \cdot \frac{1}{d_{obs}}$, where $d_{obs}$ is the distance...}
+
+\begin{reviewcomment}
+    The simulation results in Figure 4 lack error bars. Please add them to demonstrate statistical significance.
+\end{reviewcomment}
+
+\response
+We appreciate this suggestion. We have re-run the experiments over 10 random seeds and added standard deviation shading to Figure 4.
+
+% --- Reviewer 2 Section ---
+\reviewer{2}
+
+\begin{reviewcomment}
+    Is the proposed method robust against wind disturbances?
+\end{reviewcomment}
+
+\response
+This is a critical point for UAV deployment. We performed additional ablation studies under varying wind speeds.
+
+% Example of using your 'xresponse' grey box style if preferred:
+\begin{xresponse}
+    \textbf{Alternative Style Response:}
+    The results show that our policy maintains stability up to 12 m/s wind gusts.
+\end{xresponse}
+
+\end{document}

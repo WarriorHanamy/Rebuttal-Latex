@@ -1,0 +1,40 @@
+# LaTeX build products
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdfsync
+*.synctex.gz
+
+# Keep PDF but ignore intermediate build artifacts
+# Uncomment the line below if you want to ignore PDFs too
+# *.pdf
+
+# Additional LaTeX auxiliary files
+main.pdf
+rebuttal.pdf
+*.toc
+*.lot
+*.lof
+*.idx
+*.ind
+*.ilg
+*.nav
+*.snm
+*.vrb
+*.bmt
+*.figlist
+*.makefile
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.upa
+*.upb
+*.figlist
+*.makefile
+*.fls
+*.fdb_latexmk
+*.xwm
